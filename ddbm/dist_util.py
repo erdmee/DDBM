@@ -26,9 +26,16 @@ def setup_dist():
         return
     # os.environ["CUDA_VISIBLE_DEVICES"] = f"{MPI.COMM_WORLD.Get_rank() % GPUS_PER_NODE}"
     
-    th.cuda.set_device(MPI.COMM_WORLD.Get_rank())
-    # print(GPUS_PER_NODE)
+    rank = MPI.COMM_WORLD.Get_rank()
+    n_gpu = th.cuda.device_count()
     comm = MPI.COMM_WORLD
+
+    if rank < n_gpu:
+        th.cuda.set_device(rank)
+    else:
+        print(f"[Warning] Rank {rank} exceeds available GPU count {n_gpu}. Setting device to cuda:0")
+        th.cuda.set_device(0)
+        
     backend = "gloo" if not th.cuda.is_available() else "nccl"
 
     if backend == "gloo":

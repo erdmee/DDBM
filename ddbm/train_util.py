@@ -57,7 +57,7 @@ class TrainLoop:
         schedule_sampler=None,
         weight_decay=0.0,
         lr_anneal_steps=0,
-        total_training_steps=10000000,
+        total_training_steps=1000,
         augment_pipe=None,
         **sample_kwargs,
     ):
@@ -89,6 +89,22 @@ class TrainLoop:
 
         self.step = 0
         self.resume_step = 0
+
+        if dist.get_rank() == 0:
+            wandb.init(
+                project="ddbm",
+                name=self.workdir.split("/")[-1],
+                config={
+                    "batch_size": batch_size,
+                    "learning_rate": lr,
+                    "image_size": model.image_size,
+                    "ema_rate": ema_rate,
+                    "dataset": sample_kwargs.get("dataset", "unknown"),
+                },
+                dir=self.workdir,
+                mode = "disabled"
+            )
+
         self.global_batch = self.batch_size * dist.get_world_size()
 
         self.sync_cuda = th.cuda.is_available()

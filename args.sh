@@ -35,6 +35,13 @@ elif [[ $DATASET_NAME == "diode" ]]; then
 
     EXP="diode${IMG_SIZE}_${NUM_CH}d"
     SAVE_ITER=20000
+
+elif [[ $DATASET_NAME == "facades" ]]; then
+    DATA_DIR="$HOME/datasets"
+    DATASET=facades
+    IMG_SIZE=256
+    EXP="facades${IMG_SIZE}_${NUM_CH}d"
+    SAVE_ITER=100
 fi
     
 if  [[ $PRED == "ve" ]]; then
@@ -65,8 +72,9 @@ fi
 
 
 if [[ $IMG_SIZE == 256 ]]; then
+    BS=4
+elif [[ $IMG_SIZE == 128 ]]; then
     BS=16
 else
-    BS=192
+    BS=32
 fi
-

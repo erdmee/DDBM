@@ -36,7 +36,7 @@ def main(args):
     logger.configure(dir=workdir)
     if dist.get_rank() == 0:
         name = args.exp if args.resume_checkpoint == "" else args.exp + '_resume'
-        wandb.init(project="bridge", group=args.exp,name=name, config=vars(args), mode='online' if not args.debug else 'disabled')
+        #wandb.init(project="bridge", group=args.exp,name=name, config=vars(args), mode='online' if not args.debug else 'disabled')
         logger.log("creating model and diffusion...")
     
 
@@ -58,8 +58,8 @@ def main(args):
     )
     model.to(dist_util.dev())
 
-    if dist.get_rank() == 0:
-        wandb.watch(model, log='all')
+    #if dist.get_rank() == 0:
+        #wandb.watch(model, log='all')
     schedule_sampler = create_named_schedule_sampler(args.schedule_sampler, diffusion)
 
     
@@ -130,7 +130,7 @@ def create_argparser():
         ema_rate="0.9999",  # comma-separated list of EMA values
         log_interval=50,
         test_interval=500,
-        save_interval=10000,
+        save_interval=500,
         save_interval_for_preemption=50000,
         resume_checkpoint="",
         exp='',

@@ -223,8 +223,22 @@ def load_data(
     if include_test:
       testset = DIODE(dataroot=root, train=False, img_size= image_size,
                                 random_crop=False, random_flip=False)
+  elif dataset == 'facades':
+    from .aligned_dataset import EdgesDataset
 
-  
+    # 변경된 부분: dataroot 경로 조정
+    facades_root = os.path.join(root, 'facades')
+
+    trainset = EdgesDataset(dataroot=facades_root, train=True, img_size=image_size,
+                            random_crop=True, random_flip=True)
+
+    valset = EdgesDataset(dataroot=facades_root, train=True, img_size=image_size,
+                          random_crop=False, random_flip=False)
+
+    if include_test:
+        testset = EdgesDataset(dataroot=facades_root, train=False, img_size=image_size,
+                               random_crop=False, random_flip=False)
+
   loader = DataLoader(
       dataset=trainset, num_workers=num_workers, pin_memory=True,
       batch_sampler=DistInfiniteBatchSampler(
